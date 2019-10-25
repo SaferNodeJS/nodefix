@@ -8,14 +8,20 @@
   "directories": {
     "handlers": "./handlers"
   },
-  "dependencies":{
-    "pipe": "0.0.2",
-    "underscore": "1.1.6",
-    "underscore.string": "1.1.4"
+  "dependencies": {
+    "pipe": "^0.0.2",
+    "underscore": "^1.9.1",
+    "underscore.string": "^3.3.5"
   },
-  "engines": { "node": ">=0.4.8"},
+  "engines": {
+    "node": ">=0.4.8"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/falconair/nodefix.git"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-google": "^0.14.0"
   }
 }
