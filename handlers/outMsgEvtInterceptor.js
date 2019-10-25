@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 exports.newOutMsgEvtInterceptor = function(session) {
   return new outMsgEvtInterceptor(session);
 };
