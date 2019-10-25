@@ -17,15 +17,15 @@ session.on('end', function() {
   console.log('EVENT end');
 });
 session.on('logon', function(sender, target) {
-  console.log('EVENT logon: '+ sender + ', ' + target);
+  console.log('EVENT logon: ' + sender + ', ' + target);
 });
 session.on('logoff', function(sender, target) {
-  console.log('EVENT logoff: '+ sender + ', ' + target);
+  console.log('EVENT logoff: ' + sender + ', ' + target);
 });
 session.on('incomingmsg', function(sender, target, msg) {
-  console.log('EVENT incomingmsg: '+ JSON.stringify(msg));
+  console.log('EVENT incomingmsg: ' + JSON.stringify(msg));
 });
 session.on('outgoingmsg', function(sender, target, msg) {
-  console.log('EVENT outgoingmsg: '+ JSON.stringify(msg));
+  console.log('EVENT outgoingmsg: ' + JSON.stringify(msg));
 });
 

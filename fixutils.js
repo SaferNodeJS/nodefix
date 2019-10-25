@@ -4,11 +4,11 @@ exports.getCurrentUTCTimeStamp = function() {
   return getUTCTimeStamp(new Date());
 };
 
-var getUTCTimeStamp = exports.getUTCTimeStamp = function(datetime) {
+const getUTCTimeStamp = exports.getUTCTimeStamp = function(datetime) {
   const timestamp = datetime || new Date();
 
   const year = timestamp.getUTCFullYear();
-  let month = timestamp.getUTCMonth() +1;
+  let month = timestamp.getUTCMonth() + 1;
   let day = timestamp.getUTCDate();
   let hours = timestamp.getUTCHours();
   let minutes = timestamp.getUTCMinutes();
@@ -73,7 +73,7 @@ const convertRawToFIX = exports.convertRawToFIX = function(map) {
   return convertToFIX(map, map[8], map[52], map[49], map[56], map[34]);
 };
 
-var convertToFIX = exports.convertToFIX = function(msgraw, fixVersion, timeStamp, senderCompID, targetCompID, outgoingSeqNum) {
+const convertToFIX = exports.convertToFIX = function(msgraw, fixVersion, timeStamp, senderCompID, targetCompID, outgoingSeqNum) {
   // sys.log('c2F:'+JSON.stringify(msgraw));
   // defensive copy
   const msg = {};
@@ -106,15 +106,15 @@ var convertToFIX = exports.convertToFIX = function(msgraw, fixVersion, timeStamp
 
   for (var tag in msg) {
     if (msg.hasOwnProperty(tag) &&
-            tag !== '8' &&
-            tag !== '9' &&
-            tag !== '35' &&
-            tag !== '10' &&
-            tag !== '52' &&
-            tag !== '49' &&
-            tag !== '56' &&
-            tag !== '34' &&
-            tag !== ''
+      tag !== '8' &&
+      tag !== '9' &&
+      tag !== '35' &&
+      tag !== '10' &&
+      tag !== '52' &&
+      tag !== '49' &&
+      tag !== '56' &&
+      tag !== '34' &&
+      tag !== ''
     ) bodymsgarr.push(tag, '=', msg[tag], SOHCHAR);
   }
 

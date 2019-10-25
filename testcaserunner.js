@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 const fs = require('fs');
 const fix = require('./fix.js');
 const fixutil = require('./fixutils.js');
@@ -6,7 +7,7 @@ _.mixin(require('underscore.string'));
 
 const file = process.argv[2];
 
-fs.readFile(file, encoding='UTF8', function(err, data) {
+fs.readFile(file, encoding = 'UTF8', function(err, data) {
   if (err) throw err;
   const self = this;
 
@@ -19,7 +20,7 @@ fs.readFile(file, encoding='UTF8', function(err, data) {
 
   _.each(lines, function(str) {
     const c = str.charAt(0);
-    if (c==='i' || c==='e' || c==='I' || c==='E') {
+    if (c === 'i' || c === 'e' || c === 'I' || c === 'E') {
       commandQ.queue(str);
     }
   });
@@ -29,23 +30,27 @@ fs.readFile(file, encoding='UTF8', function(err, data) {
   processCommand(str);
 
   function processCommand(str) {
-    console.log('Processing '+str);
+    console.log('Processing ' + str);
     const direction = str.charAt(0);
     const msg = _.trim(str.substr(1, str.length));
 
-    if (direction=== '#') {
+    if (direction === '#') {
       return;
     }
 
     // initiate connection
-    if (direction=== 'i') {
+    if (direction === 'i') {
       self.fixServer = fix.createServer({}, function(session) {
 
         // console.log("EVENT connect");
-        // session.on("end", function(sender,target){ console.log("EVENT end"); });
-        // session.on("logon", function(sender, target){ console.log("EVENT logon: "+ sender + ", " + target); });
-        // session.on("incomingmsg", function(sender,target,msg){ console.log("Server incomingmsg: "+ JSON.stringify(msg)); });
-        // session.on("outgoingmsg", function(sender,target,msg){ console.log("Server outgoingmsg: "+ JSON.stringify(msg)); });
+        // session.on("end",
+        // function(sender,target){ console.log("EVENT end"); });
+        // session.on("logon",
+        // function(sender, target){ console.log("EVENT logon: "+ sender + ", " + target); });
+        // session.on("incomingmsg",
+        // function(sender,target,msg){ console.log("Server incomingmsg: "+ JSON.stringify(msg)); });
+        // session.on("outgoingmsg",
+        // function(sender,target,msg){ console.log("Server outgoingmsg: "+ JSON.stringify(msg)); });
 
       });
       self.fixServer.listen(1234, 'localhost', function() {
@@ -62,9 +67,9 @@ fs.readFile(file, encoding='UTF8', function(err, data) {
         self.fixClient.on('incomingmsg', function(sender, target, msg) {
           // console.log("Client incomingmsg:"+JSON.stringify(msg));
           const expectedRaw = commandQ.dequeue();
-          console.log('Processing '+expectedRaw);
+          console.log('Processing ' + expectedRaw);
           if (!_.startsWith(expectedRaw, 'E')) {
-            console.log('ERROR: expected an \'E\' command but received: '+expectedRaw);
+            console.log('ERROR: expected an \'E\' command but received: ' + expectedRaw);
             return;// throw error
           }
 
@@ -74,7 +79,7 @@ fs.readFile(file, encoding='UTF8', function(err, data) {
           const errorlist = compareMapFIX(msg, expectedMap);
 
           if (errorlist.length > 0) {
-            console.log('ERROR: '+JSON.stringify(errorlist));
+            console.log('ERROR: ' + JSON.stringify(errorlist));
             return;// throw error
           }
           if (!_.startsWith(commandQ.peek(), 'E')) {
@@ -85,7 +90,7 @@ fs.readFile(file, encoding='UTF8', function(err, data) {
     }
 
     // expected disconnect
-    if (direction=== 'e') {
+    if (direction === 'e') {
       self.fixClient.logoff();
       self.fixServer.logoff();
     }
@@ -127,12 +132,17 @@ function compareMapFIX(actual, expected) {
 
   const isequal = _.isEqual(actual, expected);
   if (!isequal) {
-    console.log('errors found:\n Expected msg:'+JSON.stringify(expected)+'\n Actual msg  :'+JSON.stringify(actual));
+    console.log('errors found:\n Expected msg:' +
+      JSON.stringify(expected) + '\n Actual msg  :' + JSON.stringify(actual));
     _.each(actual, function(val, tag) {
       const tagmatches = expected[tag] === val;
       if (!tagmatches) {
-        console.log(' Tag '+tag+' expected value '+expected[tag]+' but received '+val);
-        const errorobj = {actualMsg: actual, expectedMsg: expected, tag: tag, actualTagVal: val, expectedTagVal: expected[tag]};
+        console.log(' Tag ' + tag + ' expected value ' +
+          expected[tag] + ' but received ' + val);
+        const errorobj = {
+          actualMsg: actual,
+          expectedMsg: expected, tag: tag, actualTagVal: val, expectedTagVal: expected[tag],
+        };
         errorlist.queue(errorobj);
       }
     });
@@ -157,7 +167,7 @@ function Queue() {
 
   this.dequeue = function() {
     // Amortizes the shrink frequency of the queue
-    if (--this.count < this.data.length*0.9) {
+    if (--this.count < this.data.length * 0.9) {
       this.data = this.data.slice(this.head);
       this.head = 0;
     }

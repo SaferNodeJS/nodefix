@@ -11,10 +11,10 @@ function outMsgEvtInterceptor(session) {
   };
 
   this.outgoing = function(ctx, event) {
-    if (event.type==='data') {
+    if (event.type === 'data') {
       const fixmap = convertToMap(event.data);
       session.sessionEmitter.emit('outgoingmsg', fixmap[49], fixmap[56], fixmap);
-    } else if (event.type==='resync') {
+    } else if (event.type === 'resync') {
       session.sessionEmitter.emit('outgoingresync', event.data[49], event.data[56], event.data);
     }
 

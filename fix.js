@@ -1,8 +1,7 @@
+/* eslint-disable require-jsdoc */
 const util = require('util');
-const fs = require('fs');
 const net = require('net');
 const events = require('events');
-const path = require('path');
 const pipe = require('pipe');
 const _ = require('underscore');
 
@@ -20,7 +19,8 @@ exports.createServer = function(opt, func) {
   return server;
 };
 
-// TODO: handle error event, for example, when the listening port is already being used
+// TODO: handle error event, for example,
+// when the listening port is already being used
 function Server(opt, func) {
   events.EventEmitter.call(this);
 
@@ -30,7 +30,8 @@ function Server(opt, func) {
   const self = this;
 
   this.server = net.createServer(function(stream) {
-    stream.setTimeout(2 * 60 * 1000);// if no traffic for two minutes, kill connection!
+    // if no traffic for two minutes, kill connection!
+    stream.setTimeout(2 * 60 * 1000);
     const session = this;
 
     this.senderCompID = null;
@@ -51,10 +52,18 @@ function Server(opt, func) {
     session.sessionEmitter.emit('connect', stream.remoteAddress, self.port, 'acceptor');
 
     session.p = pipe.makePipe(stream);
-    session.p.addHandler(require('./handlers/fixFrameDecoder.js').newFixFrameDecoder());
-    session.p.addHandler(require('./handlers/outMsgEvtInterceptor.js').newOutMsgEvtInterceptor(session));
-    session.p.addHandler(require('./handlers/sessionProcessor.js').newSessionProcessor(true, opt));
-    session.p.addHandler(require('./handlers/inMsgEvtInterceptor.js').newInMsgEvtInterceptor(session));
+    session.p.addHandler(
+        require('./handlers/fixFrameDecoder.js')
+            .newFixFrameDecoder());
+    session.p.addHandler(
+        require('./handlers/outMsgEvtInterceptor.js')
+            .newOutMsgEvtInterceptor(session));
+    session.p.addHandler(
+        require('./handlers/sessionProcessor.js')
+            .newSessionProcessor(true, opt));
+    session.p.addHandler(
+        require('./handlers/inMsgEvtInterceptor.js')
+            .newInMsgEvtInterceptor(session));
 
     stream.on('data', function(data) {
       session.p.pushIncoming({data: data, type: 'data'});
@@ -88,17 +97,17 @@ function Server(opt, func) {
     self.sessions[targetCompID].end();
   };
   /* this.getMessages = function(callback){
-        var fileName = './traffic/' + session.fixVersion + '-' + session.senderCompID + '-' + session.targetCompID + '.log';
-        fs.readFile(fileName, encoding='ascii', function(err,data){
-            if(err){
-                callback(err,null);
-            }
-            else{
-                var transactions = data.split('\n');
-                callback(null,transactions);
-            }
-        });
-    };*/
+              var fileName = './traffic/' + session.fixVersion + '-' + session.senderCompID + '-' + session.targetCompID + '.log';
+              fs.readFile(fileName, encoding='ascii', function(err,data){
+                  if(err){
+                      callback(err,null);
+                  }
+                  else{
+                      var transactions = data.split('\n');
+                      callback(null,transactions);
+                  }
+              });
+          };*/
 }
 util.inherits(Server, events.EventEmitter);
 
@@ -132,10 +141,14 @@ function Client(fixVersion, senderCompID, targetCompID, opt) {
     self.stream = net.createConnection(port, host, callback);
 
     self.p = pipe.makePipe(self.stream);
-    self.p.addHandler(require('./handlers/fixFrameDecoder.js').newFixFrameDecoder());
-    self.p.addHandler(require('./handlers/outMsgEvtInterceptor.js').newOutMsgEvtInterceptor({'sessionEmitter': self}));
-    self.p.addHandler(require('./handlers/sessionProcessor.js').newSessionProcessor(false, opt));
-    self.p.addHandler(require('./handlers/inMsgEvtInterceptor.js').newInMsgEvtInterceptor({'sessionEmitter': self}));
+    self.p.addHandler(require('./handlers/fixFrameDecoder.js')
+        .newFixFrameDecoder());
+    self.p.addHandler(require('./handlers/outMsgEvtInterceptor.js')
+        .newOutMsgEvtInterceptor({'sessionEmitter': self}));
+    self.p.addHandler(require('./handlers/sessionProcessor.js')
+        .newSessionProcessor(false, opt));
+    self.p.addHandler(require('./handlers/inMsgEvtInterceptor.js')
+        .newInMsgEvtInterceptor({'sessionEmitter': self}));
 
     self.stream.on('connect', function() {
       self.emit('connect', self.host, self.port, 'initiator');
@@ -151,7 +164,7 @@ function Client(fixVersion, senderCompID, targetCompID, opt) {
     });
   };
   this.logon = function(logonmsg) {
-    logonmsg = _.isUndefined(logonmsg)? {'8': fixVersion, '49': senderCompID, '56': targetCompID, '35': 'A', '90': '0', '108': '10'} : logonmsg;
+    logonmsg = _.isUndefined(logonmsg) ? {'8': fixVersion, '49': senderCompID, '56': targetCompID, '35': 'A', '90': '0', '108': '10'} : logonmsg;
     self.p.pushOutgoing({data: logonmsg, type: 'data'});
   };
   this.connectAndLogon = function(port, host) {
@@ -166,17 +179,17 @@ function Client(fixVersion, senderCompID, targetCompID, opt) {
     self.p.pushOutgoing({data: {35: 5, 58: logoffReason}, type: 'data'});
   };
   /* this.getMessages = function(callback){
-        var fileName = './traffic/' + self.fixVersion + '-' + self.senderCompID + '-' + self.targetCompID + '.log';
-        fs.readFile(fileName, encoding='ascii', function(err,data){
-            if(err){
-                callback(err,null);
-            }
-            else{
-                var transactions = data.split('\n');
-                callback(null,transactions);
-            }
-        });
-    };*/
+              var fileName = './traffic/' + self.fixVersion + '-' + self.senderCompID + '-' + self.targetCompID + '.log';
+              fs.readFile(fileName, encoding='ascii', function(err,data){
+                  if(err){
+                      callback(err,null);
+                  }
+                  else{
+                      var transactions = data.split('\n');
+                      callback(null,transactions);
+                  }
+              });
+          };*/
 }
 util.inherits(Client, events.EventEmitter);
 
